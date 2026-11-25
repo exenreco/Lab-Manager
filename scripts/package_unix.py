@@ -60,7 +60,7 @@ else:
     shutil.copy2('target/release/lab-manager', deb / 'usr/bin/lab-manager')
     for notice in notices:
         shutil.copy2(notice, deb / 'usr/share/doc/lab-manager')
-    (deb / 'DEBIAN/control').write_text(f'Package: lab-manager\nVersion: {version.replace("-", "~", 1)}\nArchitecture: amd64\nMaintainer: Exenreco Bell\nDepends: libdbus-1-3, libssl3t64, libxkbcommon0, libegl1, libgl1, xdg-desktop-portal, gnome-keyring, openssh-client, curl\nRecommends: xdg-desktop-portal-gtk, libnotify-bin\nDescription: Local device inventory, monitoring and embedded terminals\n')
+    (deb / 'DEBIAN/control').write_text(f'Package: lab-manager\nVersion: {version.replace("-", "~", 1)}\nArchitecture: amd64\nMaintainer: Exenreco Bell\nDepends: libdbus-1-3, libssl3t64, libxkbcommon0, libxkbcommon-x11-0, libegl1, libgl1, xdg-desktop-portal, gnome-keyring, openssh-client, curl\nRecommends: xdg-desktop-portal-gtk, libnotify-bin\nDescription: Local device inventory, monitoring and embedded terminals\n')
     (deb / 'usr/share/applications/lab-manager.desktop').write_text('[Desktop Entry]\nType=Application\nName=Lab Manager\nExec=lab-manager\nIcon=utilities-terminal\nTerminal=false\nCategories=System;Network;\n')
     target = dist / f'Lab-Manager-{version}-linux-{arch}.deb'
     subprocess.run(['dpkg-deb', '--root-owner-group', '--build', str(deb), str(target)], check=True)
