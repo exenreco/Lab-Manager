@@ -1,0 +1,25 @@
+[package]
+name = "lab-manager"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+eframe = { version = "0.31.1", default-features = false, features = ["default_fonts", "glow", "x11", "wayland"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+directories = "6"
+webbrowser = "1"
+argon2 = { version = "0.5", features = ["std", "zeroize"] }
+rand_core = { version = "0.6", features = ["getrandom"] }
+zeroize = "1"
+image = { version = "0.25.10", default-features = false, features = ["png", "jpeg"] }
+portable-pty = "0.9"
+vt100 = "0.15"
+arboard = { version = "3.7", default-features = false }
+resvg = { version = "0.45", default-features = false }
+qrcode = { version = "0.14", default-features = false }
+flate2 = "1"
+base64 = "0.22"
+
+[target.'cfg(windows)'.dependencies]
+windows-sys = { version = "0.59", features = ["Win32_Foundation", "Win32_Security_Cryptography", "Win32_System_SystemInformation", "Win32_System_Registry", "Win32_UI_Controls_Dialogs", "Win32_UI_WindowsAndMessaging"] }

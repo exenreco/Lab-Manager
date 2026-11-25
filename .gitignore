@@ -1,0 +1,11 @@
+/target/
+*.pem
+*.key
+/data/
+.env
+.env.*
+!.env.example
+*.pfx
+*.p12
+*.ppk
+*.log
