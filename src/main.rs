@@ -26,6 +26,7 @@ mod terminal_panel;
 mod terminal_search;
 #[cfg(test)]
 mod ui_tests;
+mod update_panel;
 
 #[derive(Clone, Copy, PartialEq)]
 enum Page {
@@ -99,6 +100,7 @@ struct LabManager {
     notifications: notification_center::NotificationCenter,
     discovery: discovery_screen::DiscoveryScreen,
     backup: backup_ui::BackupUi,
+    updates: update_panel::UpdatePanel,
 }
 
 impl LabManager {
@@ -129,6 +131,7 @@ impl LabManager {
             notifications: notification_center::NotificationCenter::default(),
             discovery: discovery_screen::DiscoveryScreen::default(),
             backup: Default::default(),
+            updates: Default::default(),
             page: Page::Devices,
             server_form: ServerForm::default(),
             right_sidebar: sidebar::RightSidebar::default(),
@@ -1198,6 +1201,8 @@ impl LabManager {
                 ui.heading(RichText::new("Settings").size(28.0));
                 ui.label("Your servers and connection settings are saved automatically.");
                 ui.add_space(22.0);
+                design::card().show(ui, |ui| self.updates.show(ui, &self.data_root));
+                ui.add_space(16.0);
                 if let Some(root) = self.store.as_ref().and_then(|store| store.path.parent()) {
                     design::card().show(ui, |ui| {
                         self.backup.controls(
@@ -1306,6 +1311,7 @@ impl eframe::App for LabManager {
         design::BLACK.to_normalized_gamma_f32()
     }
     fn update(&mut self, ctx: &egui::Context, _: &mut eframe::Frame) {
+        self.updates.tick(ctx, &self.data_root);
         if self.auth.signed_in.is_none() {
             self.toolbar(ctx);
             egui::TopBottomPanel::bottom("signed_out_footer")

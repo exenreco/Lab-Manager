@@ -1,0 +1,33 @@
+LAB MANAGER - PRERELEASE TERMS AND CONDITIONS
+
+Copyright 2026 Exenreco Bell
+
+Lab Manager is licensed under the Apache License, Version 2.0, included
+with this installer and available at https://www.apache.org/licenses/LICENSE-2.0.
+These notices do not limit the rights granted by that license.
+
+This is an experimental prerelease. Features may change and defects may
+cause lost settings, interrupted sessions, or unintended server changes.
+Keep backups before installing updates or running administrative commands.
+
+Only connect to devices and systems you are authorized to administer.
+Review commands before running them. You control the credentials you enter
+and the changes made to your devices.
+
+Accounts and device information are stored locally. Monitoring contacts
+the devices you configure. Update checks contact GitHub. Backups and
+mobile transfer codes can contain readable device information; protect them.
+Uninstalling preserves local application data so that reinstalling can
+recover it. Delete the data folder separately if you no longer want it.
+
+The optional Windows startup task starts Lab Manager when you sign in.
+Automatic updates are optional: they check GitHub releases and download
+new versions. Installing an update requires your confirmation in the app.
+
+This prerelease uses a self-signed publisher certificate. Windows does not
+trust this certificate by default and may show a security warning.
+
+The software is provided AS IS, without warranties or conditions of any
+kind. Liability and warranty exclusions are governed by Sections 7-9 of
+the Apache License, Version 2.0. Third-party components retain their own
+licenses and notices.

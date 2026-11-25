@@ -43,7 +43,52 @@ pub(super) fn fixture() -> LabManager {
         notifications: Default::default(),
         discovery: Default::default(),
         backup: Default::default(),
+        updates: Default::default(),
     }
+}
+
+#[test]
+fn settings_shows_updates_before_backup_and_restore() {
+    let mut app = fixture();
+    app.page = Page::Storage;
+    app.data_root = std::env::temp_dir().join("lab-settings-layout-fixture");
+    app.store = Some(ServerStore {
+        path: app.data_root.join("users/test/servers.json"),
+    });
+    let ctx = egui::Context::default();
+    let mut labels = Vec::new();
+    fn collect(shape: &egui::Shape, labels: &mut Vec<(String, f32)>) {
+        match shape {
+            egui::Shape::Text(text) => labels.push((text.galley.job.text.clone(), text.pos.y)),
+            egui::Shape::Vec(shapes) => {
+                for shape in shapes {
+                    collect(shape, labels);
+                }
+            }
+            _ => (),
+        }
+    }
+    for _ in 0..2 {
+        let output = ctx.run(
+            egui::RawInput {
+                screen_rect: Some(egui::Rect::from_min_size(
+                    egui::Pos2::ZERO,
+                    Vec2::new(1100.0, 1400.0),
+                )),
+                ..Default::default()
+            },
+            |ctx| {
+                egui::CentralPanel::default().show(ctx, |ui| app.content(ui));
+            },
+        );
+        labels.clear();
+        for shape in output.shapes {
+            collect(&shape.shape, &mut labels);
+        }
+    }
+    let y = |label: &str| labels.iter().find(|(text, _)| text == label).unwrap().1;
+    assert!(y("Updates") < y("Backup & restore"));
+    assert!(labels.iter().any(|(text, _)| text == "Automatic updates"));
 }
 
 #[test]

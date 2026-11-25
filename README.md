@@ -2,6 +2,18 @@
 
 A native Rust desktop server manager for Windows, organized around `Server`, `ServerStore`, `SshService`, and `LabManager` structs and methods.
 
+## Windows prerelease
+
+Download the Windows x64 installer or portable ZIP from [GitHub Releases](https://github.com/exenreco/Lab-Manager/releases). The installer displays prerelease terms and offers an optional Windows startup checkbox. Installed data is preserved on uninstall. The first alpha is self-signed; Windows does not trust its publisher certificate by default. The public certificate and SHA-256 checksums are included with the release.
+
+Settings → **Updates**, above Backup & restore, checks releases from this repository. **Automatic updates** is off by default; when enabled it checks at launch and every six hours while open and downloads newer installers. SHA-256 hashes from GitHub release metadata are required. You explicitly choose when to install and close the app. Prerelease builds receive newer prereleases; stable builds skip them. Updates never pull source code or run Git commands on users’ PCs.
+
+To package a release on Windows, install Inno Setup 6 and Windows SDK signing tools, then run `./scripts/release.ps1`. The script creates or reuses a non-exportable self-signed certificate in the current user's certificate store, timestamps the signed app and installer, bundles third-party license notices, and writes checksums to `dist`. No private key is included in the repository or release. See [release notes](packaging/RELEASE_NOTES.md) for prerequisites and limitations.
+
+## License
+
+Apache License 2.0. See [LICENSE](LICENSE), [NOTICE](NOTICE), and the third-party icon licenses in `assets/icons`. Dependency notices are bundled in release packages.
+
 ## Run
 
 Install Rust with the MSVC toolchain and Visual Studio C++ Build Tools, then run from this folder:

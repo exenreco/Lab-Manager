@@ -9,3 +9,6 @@
 *.p12
 *.ppk
 *.log
+/dist/
+/tools/
+/release-private/
