@@ -38,8 +38,16 @@ pub fn choose_image(title_text: &str, photos: bool) -> Result<Option<PathBuf>, S
     }
 }
 #[cfg(not(windows))]
-pub fn choose_image(_title_text: &str, _photos: bool) -> Result<Option<PathBuf>, String> {
-    Err("Native icon import is currently available on Windows.".into())
+pub fn choose_image(title_text: &str, photos: bool) -> Result<Option<PathBuf>, String> {
+    let extensions = if photos {
+        vec!["png", "jpg", "jpeg"]
+    } else {
+        vec!["png"]
+    };
+    Ok(rfd::FileDialog::new()
+        .set_title(title_text)
+        .add_filter("Images", &extensions)
+        .pick_file())
 }
 
 #[cfg(windows)]
@@ -104,6 +112,14 @@ pub fn choose_backup(save: bool) -> Result<Option<PathBuf>, String> {
     }
 }
 #[cfg(not(windows))]
-pub fn choose_backup(_save: bool) -> Result<Option<PathBuf>, String> {
-    Err("Backup chooser requires Windows.".into())
+pub fn choose_backup(save: bool) -> Result<Option<PathBuf>, String> {
+    let dialog = rfd::FileDialog::new().add_filter("Lab Manager backup", &["json"]);
+    Ok(if save {
+        dialog
+            .set_title("Export Lab Manager backup")
+            .set_file_name("lab-manager-backup.json")
+            .save_file()
+    } else {
+        dialog.set_title("Choose backup to restore").pick_file()
+    })
 }

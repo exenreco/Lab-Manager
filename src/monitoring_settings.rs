@@ -78,7 +78,7 @@ pub fn show(ui: &mut egui::Ui, monitoring: &mut Monitoring, server: &Server) {
         if h.config.platform == Platform::Unifi {
             ui.small("UniFi consoles use their console SSH credentials; APs and switches use their configured device SSH credentials. SSH must be enabled on the device. Metrics depend on firmware access to /proc.");
         }
-        ui.small("Use an SSH key/agent, or save a password encrypted for this Windows user. Verify the host key through SSH Shell first.");
+        ui.small("Use an SSH key/agent, or save a password encrypted for this computer user. Verify the host key through SSH Shell first.");
         let mut auth = if h.config.uses_password() {
             AuthMode::Password
         } else {
@@ -191,8 +191,8 @@ pub fn show(ui: &mut egui::Ui, monitoring: &mut Monitoring, server: &Server) {
         }
     });
     egui::CollapsingHeader::new("Maintenance & alerts").default_open(false).show(ui, |ui| {
-        config_changed |= ui.checkbox(&mut h.config.desktop_alerts, "Windows desktop notifications").changed();
-        ui.small("Desktop alerts follow Notifications and alert thresholds below. Windows notification settings may suppress them.");
+        config_changed |= ui.checkbox(&mut h.config.desktop_alerts, "Desktop notifications").changed();
+        ui.small("Desktop alerts follow Notifications and alert thresholds below. System notification settings may suppress them.");
         row(ui, "Maintenance", 0, |ui| {
             config_changed |= maintenance_menu(ui, &mut h.config);
         });

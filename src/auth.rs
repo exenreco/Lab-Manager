@@ -498,8 +498,7 @@ pub(crate) fn protect(input: &[u8]) -> Result<Vec<u8>, String> {
     }
     #[cfg(not(windows))]
     {
-        let _ = input;
-        Err("Encrypted local accounts require Windows DPAPI.".into())
+        crate::unix_crypto::protect(input)
     }
 }
 pub(crate) fn unprotect(input: &[u8]) -> Result<Vec<u8>, String> {
@@ -509,8 +508,7 @@ pub(crate) fn unprotect(input: &[u8]) -> Result<Vec<u8>, String> {
     }
     #[cfg(not(windows))]
     {
-        let _ = input;
-        Err("Encrypted local accounts require Windows DPAPI.".into())
+        crate::unix_crypto::unprotect(input)
     }
 }
 

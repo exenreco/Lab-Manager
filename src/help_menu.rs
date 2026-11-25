@@ -112,26 +112,45 @@ pub fn show(ui: &mut egui::Ui) {
                             }
                         });
                     ui.separator();
-                    ui.allocate_ui_with_layout(
+                    let (footer, _) = ui.allocate_exact_size(
                         Vec2::new(ui.available_width(), 32.0),
-                        egui::Layout::left_to_right(egui::Align::Center)
-                            .with_main_align(egui::Align::Center),
+                        egui::Sense::hover(),
+                    );
+                    let gap = ui.spacing().item_spacing.x;
+                    let group_width = (232.0 + 2.0 * gap).min(footer.width());
+                    let button_width = ((group_width - 56.0 - 2.0 * gap) / 2.0).max(0.0);
+                    let group =
+                        egui::Rect::from_center_size(footer.center(), Vec2::new(group_width, 32.0));
+                    ui.scope_builder(
+                        egui::UiBuilder::new()
+                            .max_rect(group)
+                            .layout(egui::Layout::left_to_right(egui::Align::Center)),
                         |ui| {
                             if ui
-                                .add_enabled(
-                                    state.page > 0,
-                                    egui::Button::new("‹ Previous").frame(false),
-                                )
+                                .add_enabled_ui(state.page > 0, |ui| {
+                                    ui.add_sized(
+                                        [button_width, 32.0],
+                                        egui::Button::new("‹ Previous").frame(false),
+                                    )
+                                })
+                                .inner
                                 .clicked()
                             {
                                 state.page -= 1;
                             }
-                            ui.label(format!("{} / {}", state.page + 1, pages));
+                            ui.add_sized(
+                                [56.0, 32.0],
+                                egui::Label::new(format!("{} / {}", state.page + 1, pages))
+                                    .halign(egui::Align::Center),
+                            );
                             if ui
-                                .add_enabled(
-                                    state.page + 1 < pages,
-                                    egui::Button::new("Next ›").frame(false),
-                                )
+                                .add_enabled_ui(state.page + 1 < pages, |ui| {
+                                    ui.add_sized(
+                                        [button_width, 32.0],
+                                        egui::Button::new("Next ›").frame(false),
+                                    )
+                                })
+                                .inner
                                 .clicked()
                             {
                                 state.page += 1;

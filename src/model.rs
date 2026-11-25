@@ -373,6 +373,21 @@ pub struct ServerStore {
 }
 
 impl ServerStore {
+    pub fn for_platform(executable: &std::path::Path) -> Result<Self, String> {
+        #[cfg(windows)]
+        {
+            Self::beside_executable(executable)
+        }
+        #[cfg(not(windows))]
+        {
+            let _ = executable;
+            let directories = directories::ProjectDirs::from("com", "Exenreco", "LabManager")
+                .ok_or("Cannot find local application data directory")?;
+            Ok(Self {
+                path: directories.data_local_dir().join("servers.json"),
+            })
+        }
+    }
     pub fn for_user(root: &std::path::Path, username: &str) -> Result<Self, String> {
         if username.is_empty()
             || username.len() > 64

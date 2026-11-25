@@ -134,7 +134,7 @@ impl AuthScreen {
                 ui.add_space(12.0);
                 if self.mode==Mode::Blocked {
                     ui.label(&self.message);
-                    ui.label("Use the same Windows account that created this local account. Restore a valid backup if the file is damaged.");
+                    ui.label("Use the same computer account that created this local account. Restore a valid backup if the file is damaged.");
                     ui.small(self.store.path.display().to_string());
                     return;
                 }
@@ -191,7 +191,7 @@ impl AuthScreen {
                 }
                 if self.mode==Mode::Recover && ui.link("Back to sign in").clicked() { self.clear_secrets(); self.mode=Mode::SignIn; self.message.clear(); }
                 ui.add_space(12.0);
-                ui.small("Local only. Account data is encrypted for this Windows user. No account details are sent online.");
+                ui.small("Local only. Account data is encrypted for this computer user. No account details are sent online.");
             });
         });
     }

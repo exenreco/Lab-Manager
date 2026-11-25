@@ -12,6 +12,8 @@ pub mod ssh;
 pub mod status;
 pub mod table_layout;
 pub mod terminal;
+#[cfg(unix)]
+mod unix_crypto;
 
 pub mod device_icons;
 pub mod icon_assets;

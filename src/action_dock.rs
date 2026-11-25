@@ -280,11 +280,20 @@ pub fn paint_capsule(ui: &egui::Ui, rect: egui::Rect) {
 }
 
 pub fn paint_top_toolbar(ui: &egui::Ui, rect: egui::Rect) {
-    let corners = egui::CornerRadius {
-        nw: 22,
-        sw: 22,
-        ne: 0,
-        se: 0,
+    let corners = if cfg!(target_os = "macos") {
+        egui::CornerRadius {
+            nw: 0,
+            sw: 0,
+            ne: 22,
+            se: 22,
+        }
+    } else {
+        egui::CornerRadius {
+            nw: 22,
+            sw: 22,
+            ne: 0,
+            se: 0,
+        }
     };
     let painter = ui
         .painter()

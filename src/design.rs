@@ -225,6 +225,16 @@ pub fn card() -> egui::Frame {
         .inner_margin(20.0)
 }
 
+pub fn settings_card<R>(
+    ui: &mut egui::Ui,
+    content: impl FnOnce(&mut egui::Ui) -> R,
+) -> egui::InnerResponse<R> {
+    card().show(ui, |ui| {
+        ui.set_width(ui.available_width());
+        content(ui)
+    })
+}
+
 /// Native decorations are disabled, so explicitly hand edge drags to Windows.
 pub fn resize_window(ctx: &egui::Context) {
     use egui::{CursorIcon, ResizeDirection};
@@ -285,6 +295,29 @@ pub fn window_control(ui: &mut egui::Ui, kind: u8, maximized: bool) -> egui::Res
     response.widget_info(|| {
         egui::WidgetInfo::labeled(egui::WidgetType::Button, ui.is_enabled(), label)
     });
+    if cfg!(target_os = "macos") {
+        let color = match kind {
+            0 => Color32::from_rgb(254, 188, 46),
+            1 => Color32::from_rgb(40, 200, 64),
+            _ => Color32::from_rgb(255, 95, 87),
+        };
+        ui.painter().circle_filled(rect.center(), 6.5, color);
+        if response.hovered() || response.has_focus() {
+            lab_manager::svg_icons::paint(
+                ui.painter(),
+                egui::Rect::from_center_size(rect.center(), Vec2::splat(9.0)),
+                match kind {
+                    0 => "minus",
+                    1 => "plus",
+                    _ => "x",
+                },
+                Some(Color32::from_gray(50)),
+            );
+        }
+        return response
+            .on_hover_text(label)
+            .on_hover_cursor(egui::CursorIcon::PointingHand);
+    }
     if response.hovered() || response.has_focus() {
         ui.painter().rect_filled(
             rect,

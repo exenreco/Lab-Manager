@@ -20,7 +20,10 @@ pub fn send(message: &str) {
                         .env("LAB_MANAGER_NOTICE", message).creation_flags(0x08000000)
                         .stdin(std::process::Stdio::null()).stdout(std::process::Stdio::null()).stderr(std::process::Stdio::null()).status();
                 }
-                #[cfg(not(windows))] let _ = message;
+                #[cfg(target_os = "linux")]
+                { let _ = std::process::Command::new("notify-send").args(["--app-name=Lab Manager", "--", "Lab Manager", &message]).status(); }
+                #[cfg(target_os = "macos")]
+                { let _ = std::process::Command::new("osascript").args(["-e", "on run argv\ndisplay notification (item 1 of argv) with title \"Lab Manager\"\nend run", "--", &message]).status(); }
             }
         });
         sender

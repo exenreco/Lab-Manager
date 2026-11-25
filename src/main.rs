@@ -108,7 +108,7 @@ impl LabManager {
         design::configure(&cc.egui_ctx);
         let store = std::env::current_exe()
             .map_err(|e| e.to_string())
-            .and_then(|exe| ServerStore::beside_executable(&exe))
+            .and_then(|exe| ServerStore::for_platform(&exe))
             .ok();
         let data_root = store
             .as_ref()
@@ -1075,18 +1075,26 @@ impl LabManager {
                     egui::UiBuilder::new()
                         .id_salt("toolbar_controls")
                         .max_rect(dock_rect.shrink2(Vec2::new(8.0, 6.0)))
-                        .layout(egui::Layout::right_to_left(egui::Align::Center)),
+                        .layout(if cfg!(target_os = "macos") {
+                            egui::Layout::left_to_right(egui::Align::Center)
+                        } else {
+                            egui::Layout::right_to_left(egui::Align::Center)
+                        }),
                 );
                 controls.set_clip_rect(ui.clip_rect().union(dock_rect).intersect(screen));
                 controls.spacing_mut().item_spacing.x = 4.0;
-                if design::window_control(&mut controls, 2, maximized).clicked() {
-                    ctx.send_viewport_cmd(egui::ViewportCommand::Close);
-                }
-                if design::window_control(&mut controls, 1, maximized).clicked() {
-                    ctx.send_viewport_cmd(egui::ViewportCommand::Maximized(!maximized));
-                }
-                if design::window_control(&mut controls, 0, maximized).clicked() {
-                    ctx.send_viewport_cmd(egui::ViewportCommand::Minimized(true));
+                for kind in if cfg!(target_os = "macos") {
+                    [2, 0, 1]
+                } else {
+                    [2, 1, 0]
+                } {
+                    if design::window_control(&mut controls, kind, maximized).clicked() {
+                        ctx.send_viewport_cmd(match kind {
+                            0 => egui::ViewportCommand::Minimized(true),
+                            1 => egui::ViewportCommand::Maximized(!maximized),
+                            _ => egui::ViewportCommand::Close,
+                        });
+                    }
                 }
                 if self.auth.signed_in.is_some() {
                     action_dock::separator(&mut controls);
@@ -1192,7 +1200,11 @@ impl LabManager {
             }
             Page::Local => {
                 ui.heading(RichText::new("Local shell").size(28.0));
-                ui.label("Run local commands in the embedded PowerShell terminal.");
+                ui.label(if cfg!(windows) {
+                    "Run local commands in the embedded PowerShell terminal."
+                } else {
+                    "Run local commands in your embedded login shell."
+                });
                 ui.add_space(20.0);
                 self.open_local_terminal();
                 self.local_terminal.show(ui);
@@ -1201,10 +1213,10 @@ impl LabManager {
                 ui.heading(RichText::new("Settings").size(28.0));
                 ui.label("Your servers and connection settings are saved automatically.");
                 ui.add_space(22.0);
-                design::card().show(ui, |ui| self.updates.show(ui, &self.data_root));
+                design::settings_card(ui, |ui| self.updates.show(ui, &self.data_root));
                 ui.add_space(16.0);
                 if let Some(root) = self.store.as_ref().and_then(|store| store.path.parent()) {
-                    design::card().show(ui, |ui| {
+                    design::settings_card(ui, |ui| {
                         self.backup.controls(
                             ui,
                             root,
@@ -1218,7 +1230,7 @@ impl LabManager {
                     });
                     ui.add_space(16.0);
                 }
-                design::card().show(ui, |ui| {
+                design::settings_card(ui, |ui| {
                     ui.strong("Inventory file");
                     if let Some(store) = &self.store {
                         ui.label(store.path.display().to_string());

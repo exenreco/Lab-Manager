@@ -424,8 +424,45 @@ fn tls(s: &Server, cancel: &AtomicBool) -> Result<(i64, u16), String> {
     }
     #[cfg(not(windows))]
     {
-        let _ = (s, cancel);
-        Err("HTTPS inspection currently requires Windows".into())
+        if cancel.load(Ordering::Relaxed) {
+            return Err("Check cancelled".into());
+        }
+        let stream =
+            TcpStream::connect_timeout(&SocketAddr::new(s.ip, s.web_port), Duration::from_secs(3))
+                .map_err(|e| e.to_string())?;
+        stream
+            .set_read_timeout(Some(Duration::from_secs(3)))
+            .map_err(|e| e.to_string())?;
+        stream
+            .set_write_timeout(Some(Duration::from_secs(3)))
+            .map_err(|e| e.to_string())?;
+        let connector = native_tls::TlsConnector::new().map_err(|e| e.to_string())?;
+        let mut tls = connector
+            .connect(&s.ip.to_string(), stream)
+            .map_err(|e| format!("HTTPS certificate validation failed: {e}"))?;
+        let certificate = tls
+            .peer_certificate()
+            .map_err(|e| e.to_string())?
+            .ok_or("Server did not send a certificate")?
+            .to_der()
+            .map_err(|e| e.to_string())?;
+        let (_, certificate) = x509_parser::parse_x509_certificate(&certificate)
+            .map_err(|_| "Invalid TLS certificate")?;
+        let days = (certificate.validity().not_after.timestamp()
+            - crate::notifications::now() as i64)
+            .div_euclid(86400);
+        write!(
+            tls,
+            "HEAD / HTTP/1.1\r\nHost: {}:{}\r\nConnection: close\r\n\r\n",
+            s.ip, s.web_port
+        )
+        .map_err(|e| e.to_string())?;
+        let mut response = [0u8; 512];
+        let count = tls.read(&mut response).map_err(|e| e.to_string())?;
+        Ok((
+            days,
+            http_status(&String::from_utf8_lossy(&response[..count])).ok_or("No HTTPS response")?,
+        ))
     }
 }
 #[cfg(test)]

@@ -13,6 +13,17 @@ const API: &str = "https://api.github.com/repos/exenreco/Lab-Manager/releases?pe
 const DOWNLOAD_PREFIX: &str = "https://github.com/exenreco/Lab-Manager/releases/download/";
 const CURRENT: &str = env!("CARGO_PKG_VERSION");
 
+fn asset_name(version: &Version) -> String {
+    match std::env::consts::OS {
+        "windows" => format!("Lab-Manager-{version}-windows-x64-setup.exe"),
+        "macos" => format!("Lab-Manager-{version}-macos-{}.dmg", std::env::consts::ARCH),
+        _ => format!(
+            "Lab-Manager-{version}-linux-{}.tar.gz",
+            std::env::consts::ARCH
+        ),
+    }
+}
+
 #[derive(Default, Serialize, Deserialize)]
 struct Preferences {
     automatic: bool,
@@ -46,7 +57,7 @@ fn candidate(releases: Vec<Release>, current: &str) -> Option<(Release, Asset)> 
             {
                 return None;
             }
-            let expected = format!("Lab-Manager-{version}-windows-x64-setup.exe");
+            let expected = asset_name(&version);
             let asset = release
                 .assets
                 .iter()
@@ -247,7 +258,9 @@ impl UpdatePanel {
     pub fn show(&mut self, ui: &mut egui::Ui, root: &Path) {
         ui.strong("Updates");
         ui.label(format!(
-            "Lab Manager {CURRENT} · Windows x64 · Prerelease channel"
+            "Lab Manager {CURRENT} · {} {}",
+            std::env::consts::OS,
+            std::env::consts::ARCH
         ));
         ui.small("Updates come from exenreco/Lab-Manager on GitHub. Installers are verified against GitHub’s SHA-256 digest before opening.");
         if ui
@@ -288,7 +301,7 @@ impl UpdatePanel {
                 self.start_download(ui.ctx(), root);
             }
             if let Some(path) = &self.ready
-                && ui.button("Install update and close app").clicked()
+                && ui.button(if cfg!(windows) { "Install update and close app" } else { "Open downloaded update" }).clicked()
             {
                 let verified = self
                     .available
@@ -300,11 +313,11 @@ impl UpdatePanel {
                     self.ready = None;
                     return;
                 }
-                let mut command = Command::new(path);
-                command.arg("/SP-");
+                let mut command = if cfg!(windows) { let mut command = Command::new(path); command.arg("/SP-"); command } else if cfg!(target_os = "macos") { let mut command = Command::new("open"); command.arg(path); command } else { let mut command = Command::new("xdg-open"); command.arg(path.parent().unwrap_or(root)); command };
                 hidden(&mut command);
                 match command.spawn() {
-                    Ok(_) => ui.ctx().send_viewport_cmd(egui::ViewportCommand::Close),
+                    Ok(_) if cfg!(windows) => ui.ctx().send_viewport_cmd(egui::ViewportCommand::Close),
+                    Ok(_) => self.message = "Downloaded update opened. Quit Lab Manager before replacing the application; your data stays in your user data folder.".into(),
                     Err(e) => self.message = format!("Cannot open installer: {e}"),
                 }
             }
@@ -327,7 +340,7 @@ mod tests {
             draft: false,
             prerelease,
             assets: vec![Asset {
-                name: format!("Lab-Manager-{version}-windows-x64-setup.exe"),
+                name: asset_name(&Version::parse(version).unwrap()),
                 browser_download_url: format!("{DOWNLOAD_PREFIX}v{version}/setup.exe"),
                 digest: Some(format!("sha256:{}", "a".repeat(64))),
                 size: 1024,

@@ -27,7 +27,7 @@ pub fn ssh_command(
     remote: Option<&str>,
 ) -> Result<CommandBuilder, String> {
     server.validate()?;
-    let mut command = CommandBuilder::new("ssh.exe");
+    let mut command = CommandBuilder::new(if cfg!(windows) { "ssh.exe" } else { "ssh" });
     command.args([
         "-tt",
         "-o",
@@ -66,7 +66,7 @@ pub fn ssh_command(
         .filter(|c| c.uses_password())
         .and_then(|c| c.password_id.as_deref());
     if let (Some(id), Some(root)) = (saved, root) {
-        let mut env = std::process::Command::new("ssh.exe");
+        let mut env = std::process::Command::new(if cfg!(windows) { "ssh.exe" } else { "ssh" });
         crate::monitoring_credentials::configure(&mut env, root, id, server)?;
         for (key, value) in env.get_envs() {
             if let Some(value) = value {

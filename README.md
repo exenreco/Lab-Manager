@@ -14,6 +14,14 @@ To package a release on Windows, install Inno Setup 6 and Windows SDK signing to
 
 Apache License 2.0. See [LICENSE](LICENSE), [NOTICE](NOTICE), and the third-party icon licenses in `assets/icons`. Dependency notices are bundled in release packages.
 
+## Linux and macOS builds
+
+The **Linux and macOS builds** GitHub Actions workflow builds and tests Ubuntu 24.04 x86_64, macOS Apple Silicon, and macOS Intel on native runners. It produces a Linux `.deb` and `.tar.gz`, plus architecture-specific macOS `.dmg` files. Build artifacts include checksums and third-party notices. Run `python3 scripts/package_unix.py` after a native release build to reproduce packaging. See [platform requirements](packaging/UNIX_README.txt).
+
+On Linux/macOS, account files use ChaCha20-Poly1305 encryption with a random key stored in Linux Secret Service or macOS Keychain. An unlocked desktop credential vault is required; there is no plaintext fallback. Windows DPAPI accounts do not migrate across platforms. Register a local account and restore a device backup. Data lives in the platform's per-user application data directory rather than inside `/usr/bin` or an application bundle.
+
+The macOS toolbar remains at the top right, with rounded right corners, traffic-light controls, and left-to-right ordering that places Profile nearest the window controls. The DMG applications are ad-hoc signed; Apple Developer ID signing and notarization require an Apple signing identity and are not included.
+
 ## Run
 
 Install Rust with the MSVC toolchain and Visual Studio C++ Build Tools, then run from this folder:
