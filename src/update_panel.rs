@@ -277,7 +277,7 @@ impl UpdatePanel {
                 self.message = format!("Cannot save update preferences: {e}");
             }
         }
-        ui.small("Check at launch and every 6 hours while open; download automatically. You choose when to install and restart. Enabled for this Windows installation.");
+        ui.small("Check at launch and every 6 hours while open; download automatically. You choose when to install and restart. Enabled for this computer user.");
         ui.add_space(8.0);
         ui.horizontal_wrapped(|ui| {
             if ui

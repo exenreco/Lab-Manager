@@ -516,7 +516,7 @@ pub(crate) fn unprotect(input: &[u8]) -> Result<Vec<u8>, String> {
 mod tests {
     use super::*;
     #[test]
-    #[cfg(windows)]
+    #[cfg(any(windows, unix))]
     fn account_removal_rolls_back_on_save_failure_and_does_not_transfer_inventory() {
         use crate::model::{Server, ServerStore};
         let directory =
@@ -608,7 +608,7 @@ mod tests {
         std::fs::remove_dir(directory).unwrap();
     }
     #[test]
-    #[cfg(windows)]
+    #[cfg(any(windows, unix))]
     fn profiles_are_encrypted_isolated_and_default_for_legacy_accounts() {
         let directory =
             std::env::temp_dir().join(format!("lab-profile-auth-{}", std::process::id()));
@@ -677,7 +677,7 @@ mod tests {
         std::fs::remove_dir(directory).unwrap();
     }
     #[test]
-    #[cfg(windows)]
+    #[cfg(any(windows, unix))]
     fn accounts_keep_passwords_and_recovery_separate() {
         let directory = std::env::temp_dir().join(format!("lab-multi-auth-{}", std::process::id()));
         let store = AccountStore {
@@ -741,7 +741,7 @@ mod tests {
         std::fs::remove_dir(directory).unwrap();
     }
     #[test]
-    #[cfg(windows)]
+    #[cfg(any(windows, unix))]
     fn remembered_signin_expires_and_is_revoked_by_logout_and_reset() {
         let directory = std::env::temp_dir().join(format!("lab-auto-auth-{}", std::process::id()));
         let store = AccountStore {
@@ -817,7 +817,7 @@ mod tests {
         assert!(validate_password("short").is_err());
     }
     #[test]
-    #[cfg(windows)]
+    #[cfg(any(windows, unix))]
     fn encrypted_registration_signin_and_recovery() {
         let directory = std::env::temp_dir().join(format!("lab-auth-{}", std::process::id()));
         let store = AccountStore {

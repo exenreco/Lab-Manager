@@ -1,7 +1,9 @@
 //! Reuse host identities already trusted by PuTTY; never accept a key from the network.
+#[cfg(any(windows, test))]
 use base64::{Engine, engine::general_purpose::STANDARD};
 use std::path::Path;
 
+#[cfg(any(windows, test))]
 fn rsa_key(value: &str) -> Option<String> {
     fn field(out: &mut Vec<u8>, bytes: &[u8]) {
         out.extend_from_slice(&(bytes.len() as u32).to_be_bytes());
