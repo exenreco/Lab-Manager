@@ -7,7 +7,8 @@ use rand_core::{OsRng, RngCore};
 use std::sync::{Mutex, OnceLock};
 use zeroize::Zeroizing;
 
-static KEY: OnceLock<Mutex<Option<Zeroizing<Vec<u8>>>>> = OnceLock::new();
+type SecretKey = Zeroizing<Vec<u8>>;
+static KEY: OnceLock<Mutex<Option<SecretKey>>> = OnceLock::new();
 const HEADER: &[u8] = b"LMU1";
 const DOMAIN: &[u8] = b"Lab Manager local account encryption v1";
 

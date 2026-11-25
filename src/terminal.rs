@@ -347,8 +347,12 @@ mod tests {
     #[test]
     fn native_terminal_runs_reads_input_resizes_and_disconnects() {
         let mut s = Session::spawn(local_command(), 20, 80).unwrap();
-        s.send(b"[Console]::WriteLine(('LAB_' + 'TERMINAL_READY'))\r".to_vec())
-            .unwrap();
+        s.send(if cfg!(windows) {
+            b"[Console]::WriteLine(('LAB_' + 'TERMINAL_READY'))\r".to_vec()
+        } else {
+            b"printf '%s%s\\n' 'LAB_' 'TERMINAL_READY'\r".to_vec()
+        })
+        .unwrap();
         let start = std::time::Instant::now();
         loop {
             let text = s.parser.lock().unwrap().screen().contents();
