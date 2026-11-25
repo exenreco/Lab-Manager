@@ -1,0 +1,6 @@
+Lab Manager
+Copyright 2026 Exenreco Bell
+
+Licensed under the Apache License, Version 2.0.
+Third-party icon notices and licenses are in assets/icons.
+Rust dependency licenses remain with their respective authors.

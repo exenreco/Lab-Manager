@@ -12,6 +12,8 @@ To package a release on Windows, install Inno Setup 6 and Windows SDK signing to
 
 ## License
 
+Android and iOS companion source is in [`mobile`](mobile/README.md). The **Android and iOS builds** workflow produces a test-signed Android APK, an unsigned iPhone app, and an iOS simulator app. The companion supports encrypted local accounts, desktop QR import, device management, foreground reachability monitoring and embedded SSH. See the mobile README for platform limits and signing requirements.
+
 Apache License 2.0. See [LICENSE](LICENSE), [NOTICE](NOTICE), and the third-party icon licenses in `assets/icons`. Dependency notices are bundled in release packages.
 
 ## Linux and macOS builds
