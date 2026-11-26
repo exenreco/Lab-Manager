@@ -82,8 +82,9 @@ class TerminalHub extends ChangeNotifier {
     if (!context.mounted ||
         tab.closed ||
         _disposed ||
-        attempt != tab.generation)
+        attempt != tab.generation) {
       return;
+    }
     final owner = vault.username;
     final endpoint = '${tab.device.ip}:${tab.device.sshPort}';
     tab.status = 'Connecting…';
