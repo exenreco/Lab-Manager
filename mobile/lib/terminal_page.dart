@@ -154,9 +154,13 @@ class TerminalHub extends ChangeNotifier {
           return true;
         },
       );
+      final pty = SSHPtyConfig(
+        width: tab.terminal.viewWidth,
+        height: tab.terminal.viewHeight,
+      );
       final session = tab.command == null
-          ? await tab.client!.shell(pty: const SSHPtyConfig())
-          : await tab.client!.execute(tab.command!, pty: const SSHPtyConfig());
+          ? await tab.client!.shell(pty: pty)
+          : await tab.client!.execute(tab.command!, pty: pty);
       if (tab.closed ||
           _disposed ||
           owner != vault.username ||
