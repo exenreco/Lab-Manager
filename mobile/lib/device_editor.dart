@@ -235,6 +235,7 @@ class _DeviceEditorState extends State<DeviceEditor> {
         const SizedBox(height: 14),
         ExpansionTile(
           tilePadding: EdgeInsets.zero,
+          childrenPadding: const EdgeInsets.only(top: 12, left: 2, right: 2),
           title: const Text('SSH settings'),
           leading: const Glyph('terminal'),
           children: [
@@ -244,6 +245,7 @@ class _DeviceEditorState extends State<DeviceEditor> {
         ),
         ExpansionTile(
           tilePadding: EdgeInsets.zero,
+          childrenPadding: const EdgeInsets.only(top: 12, left: 2, right: 2),
           title: const Text('Organization & notes'),
           leading: const Glyph('folder'),
           children: [

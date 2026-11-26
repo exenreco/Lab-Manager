@@ -78,6 +78,10 @@ class _LabManagerMobileState extends State<LabManagerMobile> {
     title: 'Lab Manager',
     debugShowCheckedModeBanner: false,
     theme: appTheme(),
+    scrollBehavior: const MaterialScrollBehavior().copyWith(
+      overscroll: false,
+      physics: const ClampingScrollPhysics(),
+    ),
     home: _error != null
         ? Scaffold(
             body: Center(

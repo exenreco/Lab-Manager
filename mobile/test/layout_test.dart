@@ -89,6 +89,18 @@ void main() {
         );
         await tester.pumpAndSettle();
         expect(find.text('Home lab'), findsOneWidget);
+        expect(find.text('Scan QR'), findsNothing);
+        expect(find.text('Scan network'), findsNothing);
+        expect(find.byTooltip('Scan QR'), findsOneWidget);
+        expect(find.byTooltip('Scan network'), findsOneWidget);
+        expect(find.byTooltip('Add Device'), findsOneWidget);
+        await tester.tap(find.byTooltip('Switch to grid view'));
+        await tester.pumpAndSettle();
+        expect(find.byTooltip('Switch to list view'), findsOneWidget);
+        expect(tester.takeException(), isNull);
+        await tester.tap(find.byTooltip('Switch to list view'));
+        await tester.pumpAndSettle();
+
         expect(tester.takeException(), isNull);
         await tester.tap(find.byType(PopupMenuButton<String>).first);
         await tester.pumpAndSettle();

@@ -221,12 +221,13 @@ class _DevicesPageState extends State<DevicesPage> {
             runSpacing: 8,
             crossAxisAlignment: WrapCrossAlignment.center,
             children: [
-              OutlinedButton.icon(
+              IconButton.outlined(
+                tooltip: 'Scan QR',
                 onPressed: widget.importQr,
                 icon: const Glyph('radar'),
-                label: const Text('Scan QR'),
               ),
-              OutlinedButton.icon(
+              IconButton.outlined(
+                tooltip: 'Scan network',
                 onPressed: () => showPanel<void>(
                   context,
                   DiscoveryPanel(
@@ -238,22 +239,16 @@ class _DevicesPageState extends State<DevicesPage> {
                   ),
                 ),
                 icon: const Glyph('network'),
-                label: const Text('Scan network'),
               ),
-              FilledButton.icon(
+              IconButton.filled(
+                tooltip: 'Add Device',
                 onPressed: () => widget.edit(),
                 icon: const Glyph('plus', color: navigation),
-                label: const Text('Add Device'),
               ),
-              SegmentedButton<bool>(
-                showSelectedIcon: false,
-                segments: const [
-                  ButtonSegment(value: false, icon: Glyph('list')),
-                  ButtonSegment(value: true, icon: Glyph('layout-grid')),
-                ],
-                selected: {_grid},
-                onSelectionChanged: (values) =>
-                    setState(() => _grid = values.first),
+              IconButton.outlined(
+                tooltip: _grid ? 'Switch to list view' : 'Switch to grid view',
+                icon: Glyph(_grid ? 'list' : 'layout-grid'),
+                onPressed: () => setState(() => _grid = !_grid),
               ),
             ],
           ),
